@@ -1,0 +1,35 @@
+para hacer distintos lenguajes
+#include "shared.thrift"
+
+se puede hacer typedef
+Definir excepciones
+structs
+
+Necesitamos los ficheros que nos proporciona
+el gen. Debemos "mezclarlos" para conseguir que funcione.
+
+Depende del lenguaje saldrá un numero de ficheros u otro.
+
+
+Importante incluir las carpetas necesarias, calculator thrift
+socket.
+
+file properties > modulo > dependencia > jar 
+añadir jar
+
+Consejo primero hacerlo todo en python.
+Dejar cliente en java y servidor en python.
+
+francisco CARRANZA GARCIA15:55
+https://gitbox.apache.org/repos/asf?p=thrift.git;a=blob;hb=HEAD;f=tutorial/py/PythonClient.py
+https://gitbox.apache.org/repos/asf?p=thrift.git;a=tree;f=tutorial;hb=HEAD
+francisco CARRANZA GARCIA16:09
+https://repository.apache.org/#nexus-search;quick~org.apache.thrift
+francisco CARRANZA GARCIA16:11
+javac -cp "*.jar" *.java
+francisco CARRANZA GARCIA16:13
+https://mvnrepository.com
+francisco CARRANZA GARCIA16:15
+https://mvnrepository.com/artifact/org.apache.thrift/libthrift/0.14.1
+francisco CARRANZA GARCIA16:29
+He compartido un archivo jam con la reunión: https://jamboard.google.com/d/1TT2xDJ8vAUWh2VHQ7d83kaEkwbpTyZjikFgxwQsgRVs/edit?usp=meet_whiteboard

@@ -1,0 +1,31 @@
+pasos para usar thrift:
+Suponiendo que todo esta instalado correctamente y tenemos todas las utilidades necesarias.
+
+	1.- Definir el archivo .thrift 
+		Es un archivo donde se definen los servicios (programas en rpc) que vamos a querer ejecutar en remoto.
+		Estos servicios tienen definidos dentro unas funciones que son las que buscaremos llamar desde el cliente
+		y las que se ejecutarán (y por lo tanto estarán implementadas) en el servidor.
+
+	2.- Generar los ficheros necesarios
+		Debemos generar los ficheros necesarios para poder comunicar clientes y servidor. El comando/orden que 
+		usaremos y que por lo tanto debe estar instalado es "thrift -gen". Al comando citado se le pasará una 
+		extensión de fichero fuente para determinar el lenguaje en el que queremos generar nuestros programas.
+		Si queremos generar en python, debemos hacer thrift -gen py <archivo thrift>. Si queremos generar en java
+		thrift -gen java <archivo .thrift>
+	
+	3.- Instalar bibliotecas necesarias dependiendo del lenguaje.
+		Cuando se nos generen todos los nuevos archivos aparecerán en una nueva carpeta llamada como el archivo 
+		.thrift, no aparecen cliente y servidor por lo que los tendremos que implementar nosotros y añadir en el
+		padre de la carpeta. Dependiendo del lenguaje habrá que añadir una biblioteca u otra, pero deberemos añadir 
+		bibliotecas por cojones, en java es simple, añadir thrift.jar a las libraries del proyecto. En python es más 
+		complicado, habrá que instalar thrift con el gestor de paquetes de python (pip install thrift o python -m pip 
+		install thrift) 
+	
+	4.- Implementar los ficheros cliente.<extension del lenguaje deseado> y servidor.<extension del fichero deseado>.
+		Habrá que implementar el fichero servidor donde se va a implementar realmente el codigo de las funciones 
+		que definimos en el service (en .thrift). También deberemos implementar las llamadas desde el
+		cliente al servidor.
+
+	5.- Ejecutar los ficheros que tengamos
+		Dependerá del lenguaje habrá que compilar o no, por ejemplo, en pyhton no se compila, solo se interpreta.
+		En java el idk lo ejecutará por su cuenta. En lengujes como c++ o c habrá que compilar usando el compilador.

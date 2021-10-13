@@ -1,0 +1,4 @@
+//Fichero server.policy del directorio “simple”
+grant codeBase "D/ING INFÓRMATICA/TERCERO/SEGUNDO CUATRIMESTRE/DSD/PRÁCTICAS/practica 3/bin" {
+permission java.security.AllPermission;
+};
