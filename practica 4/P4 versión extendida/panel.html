@@ -1,0 +1,159 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link rel="stylesheet" href="css/estilos_panel.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="UTF-8">
+		<title>DomoHouse</title>
+	</head>
+	<body>
+
+		<header class="header">
+			DomoHouse
+		</header>
+
+		<div class="panel">
+
+			<!-- Esta es la seccion de sensores -->
+			<div class="sensores row">
+				<h1>SENSORES</h1>
+
+
+				<div class="icono col-4 flexFila">
+					<div class="flexColumna">
+						<pre class="info"><strong id="luz"></strong>%</pre>
+						<p>LUZ</p>
+					</div>
+
+					<p id = "msg_luz" class="mensaje"></p>
+				</div>
+
+				<div class="icono col-4 flexFila">
+					<div class="flexColumna">
+						<pre class="info"><strong id="temperatura"></strong>ºC</pre>
+						<p>Temperatura</p>
+					</div>
+
+					<p id = "msg_temperatura" class="mensaje"></p>
+				</div>
+
+				<div class="icono col-4 flexFila">
+					<div class="flexColumna flexImagen">
+						<img class="imagen" id="humo" src="" alt="detector de humo">
+						<p>Humo</p>
+					</div>
+
+					<p id = "msg_humo" class="mensaje"></p>
+				</div>
+
+			</div>
+				<!-- Esta es la seccion de actuadores -->
+				<div class="actuadores row">
+					<h1>ACTUADORES</h1>
+
+					<div class="icono col-6 flexColumna" >
+						<pre class="info"><strong id="persiana"></strong>%</pre>
+						<p>Persiana</p>
+
+						<input onmouseup="javascript:enviar()" type="range" min="1" max="100" class="slider" id="slider_persiana">
+
+					</div>
+
+					<div class="icono col-6">
+						<pre class="info"><strong id="aire_acondicionado"></strong>ºC</pre>
+						<p>Aire acondicionado</p>
+
+						<input onmouseup="javascript:enviar()" type="range" min="12" max="33" class="slider" id="slider_aire_acondicionado">
+					</div>
+
+				</div>
+		</div>
+
+  </body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="javascript/mensajes.js"></script>
+	<script type="text/javascript" src="javascript/sliders.js"></script>
+
+	<script type="text/javascript" defer>
+		// funcion que muestra por pantalla una lista de sensores con sus
+		// tipos (lo que mide el sensor) y su valor (la intensidad que percibe)
+		function actualizarSensores(sensores){
+			for (var i = 0; i < sensores.length; i++)
+				document.getElementById(sensores[i].tipo).innerHTML = sensores[i].valor;
+
+			actualizarMensajes();
+		}
+
+		// Muestra valor de los actudores
+		function actualizarActuadores(actuadores){
+			for (var i = 0; i < actuadores.length; i++)
+				document.getElementById(actuadores[i].tipo).innerHTML = actuadores[i].valor;
+
+			actualizarSliders();
+		}
+
+		function enviar(){
+			var persiana = parseInt(document.getElementById("slider_persiana").value);
+			var aire 		 = parseInt(document.getElementById("slider_aire_acondicionado").value);
+
+			var nuevosValores = [
+				{tipo: "persiana", 					 valor: persiana },
+				{tipo: "aire_acondicionado", valor: aire 		 }
+			];
+
+			console.log("Vamos a envair un mensaje al socket");
+			console.log(nuevosValores);
+
+			socket.emit('modificar-actuadores', nuevosValores);
+		}
+
+	   // ESTA ES LA PARTE DE SOCKET.IO visto desde el cliente
+
+		// obtener nuestra URL
+		var serviceURL = document.URL;
+
+		// formar url correcta para conectarnos a nuestro servidor
+		// para ello debemos extraer el protocolo, la ip y el puerto
+
+		var urlParams = serviceURL.split('/');											// Obtener palabras separadas por /
+		serviceURL = urlParams[0] + "//" + urlParams[2] + "/";			// formar direccion con protocolo, ip, port, etc
+
+		var socket = io.connect(serviceURL);
+
+		// DEFINIR COMPORTAMIENTOS AL DETECTAR EVENTOS DE SOCKET
+
+		// Cuando recibo un connect, entonces actualizo todos mis datos
+		socket.on('connect', function(){
+			socket.emit('actualizar-sensores');
+			socket.emit('actualizar-actuadores');
+		});
+
+
+
+		// cuando recibimps actualizarSensores actualizamo nuestra lista de sensores
+		socket.on('actualizar-sensores', function(data){
+			actualizarSensores(data);
+		});
+
+		socket.on('actualizar-actuadores', function (data) {
+			console.log("Hemos recibido actualizar actuadores");
+			console.log(data);
+			actualizarActuadores(data);
+		});
+
+		socket.on('modificar-actuadores', function(data){
+			actualizarActuadores(data);
+			console.log("Recibido mensaje de añadir nuevos valores actuadores");
+		});
+
+		// Cuando recibimos una notificacion general debemos actualizarSensores
+		socket.on('notify-all', function(data){
+			actualizarSensores(data);
+		});
+
+		// Cuando recibo disconnect muestro mensaje de desconexion
+		socket.on('disconnect', function() {
+			console.log("Hasta luego lucas");
+		});
+	</script>
+</html>

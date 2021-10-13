@@ -1,0 +1,67 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Connections</title>
+	</head>
+	<body>
+		<span id="mensaje_servicio"></span>
+		<div id="lista_usuarios"></div>
+	</body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+
+		// funcion que muestra un mensaje msg en el elemento con id "mensaje_servicio"
+		function mostrar_mensaje(msg){
+			var span_msg = document.getElementById('mensaje_servicio');
+			span_msg.innerHTML = msg;
+		}
+
+		// actualiza el elemento con id lista_usuarios añadiendo elementos
+		// nuevos que consisten en la ip de los clientes ya registrados
+		function actualizarLista(usuarios){
+			var listContainer = document.getElementById('lista_usuarios');
+			listContainer.innerHTML = '';
+
+			var listElement = document.createElement('ul');
+			listContainer.appendChild(listElement);
+
+			var num = usuarios.length;
+			for(var i=0; i<num; i++) {
+	            var listItem = document.createElement('li');
+	            listItem.innerHTML = usuarios[i].address + ":" + usuarios[i].port;
+	            listElement.appendChild(listItem);
+	        }
+	    }
+
+	   // ESTA ES LA PARTE DE SOCKET.IO visto desde el cliente
+
+		// obtener nuestra URL
+		var serviceURL = document.URL;
+
+		// conectarnos mediante sockets a dicha url
+		var socket = io.connect(serviceURL);
+
+		// DEFINIR COMPORTAMIENTOS AL DETECTAR EVENTOS DE SOCKET
+
+		// Cuando recibo un connect emito un mensaje por output-evt
+		socket.on('connect', function(){
+			socket.emit('output-evt', 'Buenos dias servicio!');
+		});
+
+		// Cuando recibo un output-evt, entonces muestro un mensaje
+		socket.on('output-evt', function(data) {
+			mostrar_mensaje('Mensaje de servicio: '+ data);
+		});
+
+		// cuando recibo un all-connections entonces actualizo
+		// lista con todas las conexiones
+		socket.on('all-connections', function(data) {
+			actualizarLista(data);
+		});
+
+		// Cuando recibo disconnect muestro mensaje de desconexion
+		socket.on('disconnect', function() {
+			mostrar_mensaje('El servicio ha dejado de funcionar!!');
+		});
+	</script>
+</html>

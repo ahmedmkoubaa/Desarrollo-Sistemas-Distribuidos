@@ -1,0 +1,58 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Formulario sensores</title>
+	</head>
+	<body>
+		<form action="javascript:void(0);" onsubmit="javascript:enviar();">
+			Nivel Luz: <input type="label" id="val1" /><br />
+			Nivel Temperatura: <input type="label" id="val2" /><br />
+			<input type="submit" value="actualizar" />
+		</form>
+		<span id="resul"></span>
+	</body>
+	<script type="text/javascript">
+
+		// obtener url con la que se nos ha llamado
+		var serviceURL = document.URL;
+
+		// enviar a dicha url la peticion (al servicio)
+		function enviar() {
+			var valorLuz  = document.getElementById("val1").value;
+			var valorTemp = document.getElementById("val2").value;
+
+			var indiceNombreFichero = serviceURL.lastIndexOf('/');
+			if (indiceNombreFichero > 0) serviceURL = serviceURL.substr(0, indiceNombreFichero);
+
+			// genero mi URL de petición simple al servicio
+			var url = serviceURL 								+		// A quien va la peticion
+							"/actualizar_sensores" 			+		// Que accion se pretende llevar a cabo
+							"/luz/"					+ valorLuz 	+		// argumentos de la accion
+							"/temperatura/" + valorTemp ;		// puden ser varios
+
+			// creo una nueva peticion http
+			var httpRequest = new XMLHttpRequest();
+
+			// Definimos la funcion que lanzar cuando cambie el estado
+			// de la peticion que hemos definido
+			httpRequest.onreadystatechange = function() {
+
+				// Cuando el estado de la peticion sea HECHOs
+		    	if (httpRequest.readyState === XMLHttpRequest.DONE){
+
+		    		// Le asignamos el valor de respuesta al elemento "resul"
+		        	var resultado = document.getElementById("resul");
+		        	resultado.innerHTML = httpRequest.responseText;
+		        }
+		    };
+
+		   // Definimos datos de la peticion, GET, una URL a la
+		   // que hacer la peticion y asincrono a true
+		   // Este true indica que la peticion es asincrona por lo que no hay que esperar conexion simultanea
+			httpRequest.open("GET", url, true);
+
+			// Mandamos la peticion e indicamos que el body es null (al ser un get es null)
+			httpRequest.send(null);
+		}
+	</script>
+</html>

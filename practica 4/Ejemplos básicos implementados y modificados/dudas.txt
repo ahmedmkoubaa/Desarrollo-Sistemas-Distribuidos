@@ -1,0 +1,34 @@
+Servdor:
+  Tiene un formulario para los sensores, estos lo usaran enviando datos.
+  Tiene otra pagina donde visualizar los valores actuales de los sensores.
+  Mantiene las suscripciones de los usuarios, es decir, tendrá una lista
+  con todos los usuarios que se suscribieron y estan atentos a nuevas noticias.
+  Tambien mantendra activa la conexion del agente. Guadara un historico de las
+  medidas de los sensores con su respectivo instante de tiempo.
+
+Sensores:
+  Los datos tomados se envian al servidor mediante un formulario
+  cuando se actualizan los datos los muestra en su propia pagina.
+
+Usuarios:
+  Accederán al sistema mediante la pagina web del servidor. En esta pagina
+  se encuentra el panel de control, donde vemos las metricas de los sensores
+  y podemos modificar el valor de los actuadores (por ejemplo: hay 33ºC el aire
+  esta a 23ºC y lo bajamos a 17ºC). Todas las metricas seran actualizadas bajo
+  suscripcion en tiempo real.
+
+Agente:
+  Detecta cuando las medidas sobrepasan valores que no quermos que se sobrepasen,
+  por ejemplo, hay muy poca luz o demasiada temperatura (mas de 40ºC, por ejemplo),
+  entonces genera una alarma que se envia a todos los usuarios. No tengo claro si
+  la manda el directamente o si notifica al servidor y este se encarga de notificar
+  a todos los usuarios que mantiene bajo suscripcion. Cuando tanto haya demasiada
+  luz y temperatura a la vez, entonces se cerraran totalmente las persianas
+
+
+
+Ampliaciones posibles:
+  Dejar toda la parte gráfica mucho más bonita
+  Añadir unos cuantos sensores
+  Mandar un email de manera automatica
+  Mandar un mensaje de whatsapp

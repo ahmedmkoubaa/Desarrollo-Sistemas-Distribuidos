@@ -1,0 +1,123 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>DomoHouse</title>
+	</head>
+	<body>
+
+    <div id="panel">
+      <!-- Aqui debemos llamar a una funcion actualizar -->
+      <h1>SENSORES</h1>
+      <h3>luz:         </h3> <p id="luz"></p>
+      <h3>temperatura: </h3> <p id="temperatura"></p>
+
+      <br><br><br>
+
+    </div>
+
+
+  </body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+
+		var nivelTemperatura = 0;
+		var nivelLuz = 0;
+
+		// funcion que muestra por pantalla una lista de sensores con sus
+		// tipos (lo que mide el sensor) y su valor (la intensidad que percibe)
+		function actualizarSensores(sensores){
+			for (var i = 0; i < sensores.length; i++)
+				if (sensores[i].tipo == 'luz') nivelLuz = sensores[i].valor;
+				else if (sensores[i].tipo == 'temperatura') nivelTemperatura = sensores[i].valor;
+
+				console.log("actualizando sensores");
+				console.log(nivelLuz);
+				console.log(nivelTemperatura);
+
+				document.getElementById("luz").innerHTML = nivelLuz;
+				document.getElementById("temperatura").innerHTML = nivelTemperatura
+
+				comprobarSensores();
+		}
+
+		function comprobarSensores(){
+			console.log("Comprobando sensores");
+
+
+			console.log(nivelLuz);
+			console.log(nivelTemperatura);
+
+			if (nivelLuz > 450) console.log("Luz no esta bien");
+			else console.log("luz esta bien");
+
+			if (nivelTemperatura > 35) console.log("Temperatura demasiado alta");
+			else console.log("Temperatura esta bien");
+
+			if (nivelTemperatura > 35 && nivelLuz > 450) {
+				console.log("ALARMA: demasiadas cosas estan mal");
+				// debemos notificar al servidor que hubo alarma,
+				// a continuacion modificar los valores de los actuadores
+				// socket.emit('alarma');
+				var nuevosValores = [
+					{tipo: "persiana", valor: 0.1},
+					{tipo: "aire_acondicionado", valor: 17}
+				];
+
+				socket.emit('modificar-actuadores', nuevosValores);
+				console.log("Hemos modificado los actuadores por que las condiciones lo requieren");
+			}
+		}
+
+		var nivelPersiana = 0;
+		var nivelAire = 0;
+
+		function actualizarActuadores(actuadores) {
+			for (var i = 0; i < actuadores.length; i++)
+				if (actuadores[i].tipo == "persiana") nivelPersiana = actuadores[i].valor;
+				else if (actuadores[i].tipo == "aire_acondicionado") nivelAire = actuadores[i].valor;
+		}
+
+	   // ESTA ES LA PARTE DE SOCKET.IO visto desde el cliente
+
+		// obtener nuestra URL
+		var serviceURL = document.URL;
+
+		// formar url correcta para conectarnos a nuestro servidor
+		// para ello debemos extraer el protocolo, la ip y el puerto
+
+		var urlParams = serviceURL.split('/');											// Obtener palabras separadas por /
+		serviceURL = urlParams[0] + "//" + urlParams[2] + "/";			// formar direccion con protocolo, ip, port, etc
+
+		var socket = io.connect(serviceURL);
+
+		// DEFINIR COMPORTAMIENTOS AL DETECTAR EVENTOS DE SOCKET
+
+		// Cuando recibo un connect, entonces actualizo todos mis datos
+		socket.on('connect', function(){
+			socket.emit('actualizar-sensores');
+			socket.emit('actualizar-actuadores');
+		});
+
+
+
+		// cuando recibimps actualizarSensores actualizamo nuestra lista de sensores
+		socket.on('actualizar-sensores', function(data){
+			actualizarSensores(data);
+		});
+
+		socket.on('actualizar-actuadores', function (data) {
+			actualizarActuadores(data);
+		});
+
+		// Cuando recibimos una notificacion general debemos actualizarSensores
+		socket.on('notify-all', function(data){
+			console.log("Estamos recibiendo una notificacion general");
+			actualizarSensores(data);
+		});
+
+		// Cuando recibo disconnect muestro mensaje de desconexion
+		socket.on('disconnect', function() {
+			console.log("Hasta luego lucas");
+		});
+	</script>
+</html>

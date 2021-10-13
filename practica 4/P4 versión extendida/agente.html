@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="/css/estilos_agente.css">
+
+		<title>DomoHouse</title>
+	</head>
+	<body>
+
+    <div id="panel">
+      <!-- Aqui debemos llamar a una funcion actualizar -->
+      <h1>AGENTE ACTIVO </h1>
+			<h2>Sensores monitorizados</h2>
+      <h3>luz:         </h3> <p id="luz"></p>
+      <h3>temperatura: </h3> <p id="temperatura"></p>
+			<h3>humo:</h3> <p id="humo"></p>
+
+      <br><br><br>
+
+			<h1>INFO</h1><p class="notificacion" id="msg_agente"> </p>
+
+    </div>
+
+
+  </body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="javascript/agente.js"></script>
+</html>
